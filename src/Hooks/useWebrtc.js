@@ -9,20 +9,20 @@ export const useWebrtc = (stream) => {
 
   useEffect(() => {
     const handleOffer = async ({ offer }) => {
-  console.log("OFFER RECEIVED on joiner");
+  // console.log("OFFER RECEIVED on joiner");
 
-  console.log("Offer received");
+  // console.log("Offer received");
 
 await pc.setRemoteDescription(new RTCSessionDescription(offer));
-console.log("Remote description set");
+// console.log("Remote description set");
 
 const answer = await pc.createAnswer();
-console.log("Answer created");
+// console.log("Answer created");
 
 await pc.setLocalDescription(answer);
-console.log("Local description set");
+// console.log("Local description set");
 
-console.log("Emitting answer", RoomId);
+// console.log("Emitting answer", RoomId);
 socket.emit("answer", { answer, RoomId });
 };
     if (!stream) {
@@ -49,8 +49,8 @@ socket.emit("answer", { answer, RoomId });
       };
       pc.ontrack = (event) => {
         setRemoteStream(event.streams[0]);
-        console.log("Remote stream received:", event.streams[0]);
-        console.log("received event", event);
+        // console.log("Remote stream received:", event.streams[0]);
+        // console.log("received event", event);
       };
       //Offerer side
       if (isOfferer) {

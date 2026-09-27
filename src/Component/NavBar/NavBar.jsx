@@ -11,7 +11,7 @@ function NavBar() {
           alt="VedMeet Logo" 
           className="navbar-logo" 
         />
-        <span className="navbar-brand">VedMeet</span>
+        <span className="navbar-brand">VedRing</span>
       </div>
      <div className="navbar-right">
         <button className="navbar-btn">
