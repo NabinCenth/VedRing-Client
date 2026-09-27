@@ -53,27 +53,47 @@ socket.emit("answer", { answer, RoomId });
         console.log("received event", event);
       };
       //Offerer side
-      if (isOfferer) {socket.on('user-joined', async ({socketId,Name}) => {
+      if (isOfferer) {
+          let pendingOffer = null;
+  let peerIsReady = false;
+        socket.on('user-joined', async ({socketId,Name}) => {
         console.log("User joined:", socketId,Name);
         setRemotename(Name);
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
-
-  await new Promise((resolve) => setTimeout(resolve, 3000));// for teswting 
+        if (!peerIsReady) {
+          pendingOffer = offer;
+        }
+        if (peerIsReady ) {
+           // await new Promise((resolve) => setTimeout(resolve, 3000));// for teswting 
         socket.emit("offer", { offer, RoomId });
         console.log("Offer sent:", offer,socketId);
+        pendingOffer = null;
+        }
+
+ 
       });
+      socket.on('peer-ready', async ({ socketId }) => {
+        if (pendingOffer) {
+    socket.emit("offer", { offer: pendingOffer, RoomId });
+          pendingOffer = null;
+        }
+          else{
+peerIsReady = true;
+          }
+        }
+       );
         socket.on("answer", async ({answer}) => {
           await pc.setRemoteDescription(new RTCSessionDescription(answer));
         });
-        socket.emit("peer-ready");
+       
       }
       console.log("isOfferer", isOfferer);
       //Receiver side
       if (!isOfferer) {
             socket.on("offer",handleOffer); 
             console.log("Registering offer listener now");
-              socket.emit("peer-ready")
+              socket.emit("peer-ready", { RoomId });
               
       }
       socket.on("ice-candidate", async ({ candidate }) => {
